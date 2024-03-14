@@ -93,10 +93,16 @@ int main(void)
   MX_SPI1_Init();
   MX_USART1_UART_Init();
   MX_TIM4_Init();
+  MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
     RetargetInit(&huart1);
+
     LCD_Init();
     LCD_Clear(LCD_WHITE);   // ÉèÖÃ°×É«±³¾°
+
+    HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_1);
+    HAL_TIMEx_PWMN_Start(&htim1,TIM_CHANNEL_1);
+    HAL_TIM_Base_Start_IT(&htim1);
   /* USER CODE END 2 */
 
   /* Infinite loop */

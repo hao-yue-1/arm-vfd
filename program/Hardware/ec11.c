@@ -6,6 +6,7 @@
 #include "tim.h"
 #include <stdio.h>
 #include "debug.h"
+#include "spwm.h"
 
 /**
  * 外部中断回调函数 - EC11
@@ -90,6 +91,15 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
             }
             tim4_1ms = 0;
             HAL_TIM_Base_Stop(&htim4);  // 消抖完毕 关闭定时器
+        }
+    }
+
+    if (htim->Instance == TIM1)
+    {
+                __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, SPWM_List[SPWM_Cnt++]);
+        if(SPWM_Cnt >= SPWM_N)
+        {
+            SPWM_Cnt = 0;
         }
     }
 }
