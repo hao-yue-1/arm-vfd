@@ -76,12 +76,13 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
  */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-    static uint32_t tim4_1ms;
+    static uint32_t tim4_1ms;   // 定时器4的计时周期为1ms
+    static uint16_t spwm_cnt;   // SPWM数组下标
 
+    /* EC11 - 10ms按键消抖 */
     if (htim->Instance == TIM4)
     {
         tim4_1ms++;
-        /* EC11 - 10ms按键消抖 */
         if (tim4_1ms == 10)
         {
             GPIO_PinState key_state = HAL_GPIO_ReadPin(EC11_A_GPIO_Port, EC11_KEY_Pin);
@@ -94,12 +95,13 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         }
     }
 
+    /* SPWM */
     if (htim->Instance == TIM1)
     {
-                __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, SPWM_List[SPWM_Cnt++]);
-        if(SPWM_Cnt >= SPWM_N)
+        __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, spwm_list_50[spwm_cnt++]);
+        if(spwm_cnt >= SPWM_50)
         {
-            SPWM_Cnt = 0;
+            spwm_cnt = 0;
         }
     }
 }
