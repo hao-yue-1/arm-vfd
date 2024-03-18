@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "spi.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -26,6 +27,7 @@
 /* USER CODE BEGIN Includes */
 #include "spwm.h"
 #include "retarget.h"
+#include "lcd.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -91,10 +93,14 @@ int main(void)
   MX_TIM1_Init();
   MX_TIM4_Init();
   MX_USART1_UART_Init();
+  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
     RetargetInit(&huart1);
-    set_spwm(4.7f);
 
+    LCD_Init();
+    LCD_Clear(LCD_WHITE);
+
+    set_spwm(4.7f);
     HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_1);
     HAL_TIMEx_PWMN_Start(&htim1,TIM_CHANNEL_1);
     HAL_TIM_Base_Start_IT(&htim1);
