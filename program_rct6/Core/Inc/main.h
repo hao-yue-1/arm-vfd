@@ -57,6 +57,14 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define EC11_KEY_Pin GPIO_PIN_7
+#define EC11_KEY_GPIO_Port GPIOB
+#define EC11_KEY_EXTI_IRQn EXTI9_5_IRQn
+#define EC11_A_Pin GPIO_PIN_8
+#define EC11_A_GPIO_Port GPIOB
+#define EC11_A_EXTI_IRQn EXTI9_5_IRQn
+#define EC11_B_Pin GPIO_PIN_9
+#define EC11_B_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

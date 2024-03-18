@@ -45,17 +45,17 @@ void set_spwm(float spwm_freq)
  * 定时器中断回调函数 定时器周期: 1ms
  * @param htim
  */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-    static uint16_t spwm_cnt;   // SPWM数组下标
-
-    /* SPWM */
-    if (htim->Instance == TIM1)
-    {
-        __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, spwm_list[spwm_cnt++]);
-        if(spwm_cnt >= spwm_list_size)
-        {
-            spwm_cnt = 0;
-        }
-    }
-}
+//void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+//{
+//    static uint16_t spwm_cnt;   // SPWM数组下标
+//
+//    /* SPWM */
+//    if (htim->Instance == TIM1)
+//    {
+//        __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, spwm_list[spwm_cnt++]);
+//        if(spwm_cnt >= spwm_list_size)
+//        {
+//            spwm_cnt = 0;
+//        }
+//    }
+//}
