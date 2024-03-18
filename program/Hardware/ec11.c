@@ -98,8 +98,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     /* SPWM */
     if (htim->Instance == TIM1)
     {
-        __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, spwm_list_50[spwm_cnt++]);
-        if(spwm_cnt >= SPWM_50)
+        __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, spwm_list_50_6[spwm_cnt++]);
+        if(spwm_cnt >= SPWM_50_6)
         {
             spwm_cnt = 0;
         }
