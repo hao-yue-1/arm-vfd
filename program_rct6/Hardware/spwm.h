@@ -7,7 +7,6 @@
 
 #include <stdint.h>
 
-#define SPWM_50 2000
-extern uint16_t spwm_list_50[SPWM_50];
+void set_spwm(float spwm_freq);
 
 #endif //PROGRAM_RCT6_SPWM_H
