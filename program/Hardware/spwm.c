@@ -4,8 +4,8 @@
 
 #include "spwm.h"
 #include "tim.h"
-#include <stdlib.h>
 #include <math.h>
+#include "debug.h"
 
 uint16_t *spwm_list = NULL;
 uint16_t spwm_list_size = 0;
@@ -21,35 +21,15 @@ uint16_t spwm_list_size = 0;
 void get_spwm_list(uint32_t pwm_freq, uint16_t pwm_duty, float spwm_freq)
 {
     spwm_list_size = round(pwm_freq / spwm_freq);
-    spwm_list = (uint16_t*) malloc(sizeof(uint16_t) * spwm_list_size);
 
     float omega = 2.0 * M_PI * spwm_freq / pwm_freq;
     float theta;
     for (int i = 0; i < spwm_list_size; ++i)
     {
-        theta = fmod(omega * i, 2.0 * M_PI); // 计算角度，使用整数表示频率的倍数
-        spwm_list[i] = (uint16_t)((0.5 * (1 + sin(theta))) * pwm_duty); // 计算占空比，sin函数返回-1到1之间的值，将其映射到0到1之间
+        theta = fmod(omega * i, 2.0 * M_PI); // 计算角度 使用整数表示频率的倍数
+        spwm_list[i] = (uint16_t)((0.5 * (1 + sin(theta))) * pwm_duty); // 计算占空比 sin函数返回-1到1之间的值 将其映射到0到1之间
     }
 }
-
-/**
- * 定时器中断回调函数 定时器周期: 1ms
- * @param htim
- */
-//void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-//{
-//    static uint16_t spwm_cnt;   // SPWM数组下标
-//
-//    /* SPWM */
-//    if (htim->Instance == TIM1)
-//    {
-//        __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, spwm_list[spwm_cnt++]);
-//        if(spwm_cnt >= spwm_list_size)
-//        {
-//            spwm_cnt = 0;
-//        }
-//    }
-//}
 
 /**
  * 重新设置定时器1的参数
@@ -117,15 +97,56 @@ void tim1_reset(uint32_t prescaler, uint32_t period)
     /* 重新开启PWM输出和定时器中断 */
     HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_1);
     HAL_TIMEx_PWMN_Start(&htim1,TIM_CHANNEL_1);
-    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, period/2);
     HAL_TIM_Base_Start_IT(&htim1);
 }
 
 /**
  * 根据目标正弦波的频率设置定时器参数并生成正弦波
- * @param spwm_freq
+ * @param spwm_freq 目标正弦波频率
+ * @return 0成功
  */
-void spwm_set(float spwm_freq)
+uint8_t spwm_set(float spwm_freq)
 {
+    if (spwm_freq >= 1 && spwm_freq <= 2)
+    {
+        tim1_reset(36, 1000);   // 2kHz
+        get_spwm_list(2000, 1000, spwm_freq);
+    }
+    else if (spwm_freq <= 4)
+    {
+        tim1_reset(18, 800);    // 5kHz
+        get_spwm_list(5000, 800, spwm_freq);
+    }
+    else if (spwm_freq <= 10)
+    {
+        tim1_reset(9, 800); // 10kHz
+        get_spwm_list(10000, 800, spwm_freq);
+    }
+    else if (spwm_freq <= 20)
+    {
+        tim1_reset(4, 720); // 25kHz
+        get_spwm_list(25000, 720, spwm_freq);
+    }
+    else if (spwm_freq <= 40)
+    {
+        tim1_reset(2, 720); // 50kHz
+        get_spwm_list(50000, 720, spwm_freq);
+    }
+    else if (spwm_freq <= 80)
+    {
+        tim1_reset(1, 720); // 100kHz
+        get_spwm_list(100000, 720, spwm_freq);
+    }
+    else if (spwm_freq <= 100)
+    {
+        tim1_reset(1, 360); // 200kHz
+        get_spwm_list(200000, 360, spwm_freq);
+    }
+    else
+    {
+        DEBUG_ERROR();  // 用户设置的正弦波频率超出范围 设置功能应设置边界保护
+        return 1;
+    }
 
+    return 0;
 }

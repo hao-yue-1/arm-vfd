@@ -47,9 +47,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
                         {
                             printf("this is +\r\n");
                             /* 增大目标正弦波频率 */
-                            if (target_spwm_freq < 100)
+                            if ((target_spwm_freq + spwm_freq_step) < 100)
                             {
                                 target_spwm_freq += spwm_freq_step;
+                                spwm_set(target_spwm_freq);
                             }
                             lcd_printf("target is %f\r\n", target_spwm_freq);
                         }
@@ -57,9 +58,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
                         {
                             printf("this is -\r\n");
                             /* 减小目标正弦波频率 */
-                            if (target_spwm_freq > 1)
+                            if ((target_spwm_freq - spwm_freq_step) > 1)
                             {
                                 target_spwm_freq -= spwm_freq_step;
+                                spwm_set(target_spwm_freq);
                             }
                             lcd_printf("target is %f\r\n", target_spwm_freq);
                         }
@@ -90,6 +92,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     static uint32_t tim4_1ms;   // 定时器4的计时周期为1ms
+    static uint16_t spwm_cnt;   // SPWM数组下标
 
     /* EC11 - 10ms按键消抖 */
     if (htim->Instance == TIM4)
@@ -114,6 +117,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
             }
             tim4_1ms = 0;
             HAL_TIM_Base_Stop(&htim4);  // 消抖完毕 关闭定时器
+        }
+    }
+
+    /* SPWM */
+    if (htim->Instance == TIM1)
+    {
+        __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, spwm_list[spwm_cnt++]);
+        if(spwm_cnt >= spwm_list_size)
+        {
+            spwm_cnt = 0;
         }
     }
 }

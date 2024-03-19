@@ -98,17 +98,12 @@ int main(void)
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
     RetargetInit(&huart1);
-
+    /* 初始化LCD */
     lcd_init(LCD_WHITE, LCD_BLACK);
+    /* 初始化SPWM */
+    spwm_list = (uint16_t*) malloc(sizeof(uint16_t) * SPWM_LIST_MAX_SIZE);  // 动态分配内存
+    spwm_set(target_spwm_freq);
 
-    tim1_reset(2, 720);
-    get_spwm_list(50000, 720, 20.6f);
-    HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_1);
-    HAL_TIMEx_PWMN_Start(&htim1,TIM_CHANNEL_1);
-//    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, 360);
-    HAL_TIM_Base_Start_IT(&htim1);
-
-    lcd_printf("init ok\r\n");
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -118,8 +113,6 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-      HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-      HAL_Delay(1000);
   }
   /* USER CODE END 3 */
 }
