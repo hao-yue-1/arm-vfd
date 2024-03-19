@@ -43,8 +43,8 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-float target_spwm_freq = 1.0f;  // 目标正弦波频率
-float spwm_freq_step = 1.0f;    // 调整正弦波频率步进值
+uint16_t target_spwm_freq = 10; // 目标正弦波频率 使用整数代替浮点数 实际/=10
+uint8_t spwm_freq_step = 10;    // 调整正弦波频率步进值 使用整数代替浮点数 实际/=10
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/

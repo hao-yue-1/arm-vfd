@@ -47,23 +47,23 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
                         {
                             printf("this is +\r\n");
                             /* 增大目标正弦波频率 */
-                            if ((target_spwm_freq + spwm_freq_step) < 100)
+                            if ((target_spwm_freq + spwm_freq_step) <= 1000)
                             {
                                 target_spwm_freq += spwm_freq_step;
                                 spwm_set(target_spwm_freq);
                             }
-                            lcd_printf("target is %f\r\n", target_spwm_freq);
+                            lcd_printf("target = %f | %d\r\n", (float)target_spwm_freq / 10.0f, target_spwm_freq);
                         }
                         else if (b_state_last==1 && b_state==0) // 1-0 逆时针动作
                         {
                             printf("this is -\r\n");
                             /* 减小目标正弦波频率 */
-                            if ((target_spwm_freq - spwm_freq_step) > 1)
+                            if ((target_spwm_freq - spwm_freq_step) >= 10)
                             {
                                 target_spwm_freq -= spwm_freq_step;
                                 spwm_set(target_spwm_freq);
                             }
-                            lcd_printf("target is %f\r\n", target_spwm_freq);
+                            lcd_printf("target = %f | %d\r\n", (float)target_spwm_freq / 10.0f, target_spwm_freq);
                         }
                         else
                         {
@@ -105,15 +105,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
             {
                 printf("this is KEY\r\n");
                 /* 切换正弦波频率调制步进值 */
-                if (spwm_freq_step == 1)
+                switch (spwm_freq_step)
                 {
-                    spwm_freq_step = 0.1f;
+                    case 1:   spwm_freq_step = 10;  break;
+                    case 10:  spwm_freq_step = 100; break;
+                    case 100: spwm_freq_step = 1;   break;
+                    default: DEBUG_ERROR();
                 }
-                else
-                {
-                    spwm_freq_step = 1.0f;
-                }
-                lcd_printf("step is %f\r\n", spwm_freq_step);
+                lcd_printf("step = %f | %d\r\n", (float)spwm_freq_step / 10.0f, spwm_freq_step);
             }
             tim4_1ms = 0;
             HAL_TIM_Base_Stop(&htim4);  // 消抖完毕 关闭定时器

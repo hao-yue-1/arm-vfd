@@ -105,42 +105,44 @@ void tim1_reset(uint32_t prescaler, uint32_t period)
  * @param spwm_freq 目标正弦波频率
  * @return 0成功
  */
-uint8_t spwm_set(float spwm_freq)
+uint8_t spwm_set(uint16_t spwm_freq)
 {
-    if (spwm_freq >= 1 && spwm_freq <= 2)
+    float spwm_freq_true = (float)spwm_freq / 10.0f;    // 计算真正的频率值
+
+    if (spwm_freq_true >= 1 && spwm_freq_true <= 2)
     {
         tim1_reset(36, 1000);   // 2kHz
-        get_spwm_list(2000, 1000, spwm_freq);
+        get_spwm_list(2000, 1000, spwm_freq_true);
     }
-    else if (spwm_freq <= 4)
+    else if (spwm_freq_true <= 4)
     {
         tim1_reset(18, 800);    // 5kHz
-        get_spwm_list(5000, 800, spwm_freq);
+        get_spwm_list(5000, 800, spwm_freq_true);
     }
-    else if (spwm_freq <= 10)
+    else if (spwm_freq_true <= 10)
     {
         tim1_reset(9, 800); // 10kHz
-        get_spwm_list(10000, 800, spwm_freq);
+        get_spwm_list(10000, 800, spwm_freq_true);
     }
-    else if (spwm_freq <= 20)
+    else if (spwm_freq_true <= 20)
     {
         tim1_reset(4, 720); // 25kHz
-        get_spwm_list(25000, 720, spwm_freq);
+        get_spwm_list(25000, 720, spwm_freq_true);
     }
-    else if (spwm_freq <= 40)
+    else if (spwm_freq_true <= 40)
     {
         tim1_reset(2, 720); // 50kHz
-        get_spwm_list(50000, 720, spwm_freq);
+        get_spwm_list(50000, 720, spwm_freq_true);
     }
-    else if (spwm_freq <= 80)
+    else if (spwm_freq_true <= 80)
     {
         tim1_reset(1, 720); // 100kHz
-        get_spwm_list(100000, 720, spwm_freq);
+        get_spwm_list(100000, 720, spwm_freq_true);
     }
-    else if (spwm_freq <= 100)
+    else if (spwm_freq_true <= 100)
     {
         tim1_reset(1, 360); // 200kHz
-        get_spwm_list(200000, 360, spwm_freq);
+        get_spwm_list(200000, 360, spwm_freq_true);
     }
     else
     {
