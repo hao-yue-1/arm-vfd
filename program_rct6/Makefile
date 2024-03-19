@@ -63,7 +63,8 @@ Hardware/ec11.c \
 Core/Src/spi.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c \
 Hardware/lcd.c \
-Hardware/lcd_font.c
+Hardware/lcd_font.c \
+Hardware/lcd_printf.c
 
 # ASM sources
 ASM_SOURCES =  \

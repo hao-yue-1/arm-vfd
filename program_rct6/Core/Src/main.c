@@ -28,6 +28,7 @@
 #include "spwm.h"
 #include "retarget.h"
 #include "lcd.h"
+#include "lcd_printf.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -97,12 +98,13 @@ int main(void)
   /* USER CODE BEGIN 2 */
     RetargetInit(&huart1);
 
-    LCD_Init();
-    LCD_Clear(LCD_WHITE);
+    lcd_init(LCD_BLACK, LCD_WHITE);
+    lcd_printf("lcd init is ok\r\n");
 
     set_spwm(4.7f);
     HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_1);
     HAL_TIMEx_PWMN_Start(&htim1,TIM_CHANNEL_1);
+    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, 360);
     HAL_TIM_Base_Start_IT(&htim1);
   /* USER CODE END 2 */
 

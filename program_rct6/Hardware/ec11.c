@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include "debug.h"
 #include "spwm.h"
+#include "lcd_printf.h"
 
 /**
  * 外部中断回调函数 - EC11
@@ -44,20 +45,20 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
                     {
                         if (b_state_last==0 && b_state==1)      // 0-1 顺时针动作
                         {
-                            printf("this is +\r\n");
+                            lcd_printf("this is +\r\n");
                         }
                         else if (b_state_last==1 && b_state==0) // 1-0 逆时针动作
                         {
-                            printf("this is -\r\n");
+                            lcd_printf("this is -\r\n");
                         }
                         else
                         {
-                            DEBUG_ERROR();  // 错误的B信号
+                            DEBUG_ERROR_LCD();  // 错误的B信号
                         }
                     }
                     else
                     {
-                        DEBUG_ERROR();  // 0-0 错误的A信号
+                        DEBUG_ERROR_LCD();  // 0-0 错误的A信号
                     }
                     a_state_last = a_state;
                     b_state_last = b_state;
@@ -66,7 +67,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
             }
             break;
         }
-        default: DEBUG_ERROR();  // 系统错误 or 没有给对应的中断引脚写回调函数
+        default: DEBUG_ERROR_LCD();  // 系统错误 or 没有给对应的中断引脚写回调函数
     }
 }
 
@@ -87,7 +88,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
             GPIO_PinState key_state = HAL_GPIO_ReadPin(EC11_A_GPIO_Port, EC11_KEY_Pin);
             if (key_state == 0)
             {
-                printf("this is KEY\r\n");
+                lcd_printf("this is KEY\r\n");
             }
             tim4_1ms = 0;
             HAL_TIM_Base_Stop(&htim4);  // 消抖完毕 关闭定时器
