@@ -27,7 +27,8 @@
 /* USER CODE BEGIN Includes */
 #include "retarget.h"
 #include "lcd.h"
-#include "lcd_font.h"
+#include "lcd_printf.h"
+#include "spwm.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,7 +43,8 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+float target_spwm_freq = 1.0f;  // 目标正弦波频率
+float spwm_freq_step = 1.0f;    // 调整正弦波频率步进值
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -97,12 +99,16 @@ int main(void)
   /* USER CODE BEGIN 2 */
     RetargetInit(&huart1);
 
-    LCD_Init();
-    LCD_Clear(LCD_WHITE);   // 设置白色背景
+    lcd_init(LCD_WHITE, LCD_BLACK);
 
+    tim1_reset(2, 720);
+    get_spwm_list(50000, 720, 20.6f);
     HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_1);
     HAL_TIMEx_PWMN_Start(&htim1,TIM_CHANNEL_1);
+//    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, 360);
     HAL_TIM_Base_Start_IT(&htim1);
+
+    lcd_printf("init ok\r\n");
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -112,8 +118,8 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-//      HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-//      HAL_Delay(1000);
+      HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+      HAL_Delay(1000);
   }
   /* USER CODE END 3 */
 }

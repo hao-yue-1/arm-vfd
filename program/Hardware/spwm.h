@@ -7,7 +7,7 @@
 
 #include <stdint.h>
 
-#define SPWM_50_6 1976
-extern uint16_t spwm_list_50_6[SPWM_50_6];
+void get_spwm_list(uint32_t pwm_freq, uint16_t pwm_duty, float spwm_freq);
+void tim1_reset(uint32_t prescaler, uint32_t period);
 
 #endif //PROGRAM_SPWM_H

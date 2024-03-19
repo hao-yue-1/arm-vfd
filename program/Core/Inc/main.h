@@ -46,7 +46,8 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-
+extern float target_spwm_freq;
+extern float spwm_freq_step;
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
