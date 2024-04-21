@@ -64,7 +64,8 @@ Hardware/lcd.c \
 Hardware/lcd_font.c \
 Hardware/ec11.c \
 Hardware/spwm.c \
-Hardware/lcd_printf.c
+Hardware/lcd_printf.c \
+Hardware/system.c
 
 # ASM sources
 ASM_SOURCES =  \

@@ -5,6 +5,7 @@
 #include "lcd.h"
 #include "lcd_font.h"
 #include "spi.h"
+#include "system.h"
 
 uint16_t lcd_color_char = LCD_WHITE;    // 字符颜色
 uint16_t lcd_color_back = LCD_BLACK;    // 背景颜色
@@ -463,13 +464,36 @@ void lcd_print_string(uint16_t x, uint16_t y, const uint8_t *p, uint16_t color)
     }
 }
 
+ /**
+  * LCD - 显示一张图片 - x_len*y_len的矩形图片
+  * @param x1
+  * @param y1
+  * @param x_len
+  * @param y_len
+  * @param img
+  */
+void lcd_print_image(uint16_t x1, uint16_t y1, uint16_t x_len, uint16_t y_len, const uint8_t* img)
+{
+    uint16_t x2 = x1 + x_len - 1;
+    uint16_t y2 = y1 + y_len - 1;
+
+    LCD_SetAddress(x1, y1, x2, y2);
+
+    uint32_t size = (x2-x1+1) * (y2-y1+1);   //计算图像总像素面积
+    for (uint32_t i = 0; i < size; i++)
+    {
+        LCD_WriteData8(img[i*2+1]);
+        LCD_WriteData8(img[i*2]);
+    }
+}
+
 /**
- * LCD - 显示一张图片 - n*n的正方形图片
+ * LCD - 显示一张图片 - n*n的正方形图片 - 压缩过的二值图片
  * @param x1
  * @param y1
  * @param len 正方形图片的边长
  */
-void lcd_print_image(uint16_t x1, uint16_t y1, uint16_t len, const uint8_t* img)
+void LCD_PrintPictureBin(uint16_t x1, uint16_t y1, uint16_t len, const uint8_t* bin)
 {
     uint16_t x2 = x1+len-1;
     uint16_t y2 = y1+len-1;
@@ -477,10 +501,25 @@ void lcd_print_image(uint16_t x1, uint16_t y1, uint16_t len, const uint8_t* img)
     LCD_SetAddress(x1, y1, x2, y2);
 
     uint32_t size = (x2-x1+1) * (y2-y1+1);   //计算图像总像素面积
+    size *= 2;  // 2个字节表示一个像素点
+    size /= 8;  // 压缩后的大小 8个字节压缩为1个字节
+    size += 8;  // 加上8个字节的帧头
 
-    for (uint32_t i = 0; i < size; i++)
+    /* 前8个字节数据是帧头 直接写入 */
+    for (int i = 0; i < 8; ++i)
     {
-        LCD_WriteData8(img[i*2+1]);
-        LCD_WriteData8(img[i*2]);
+        LCD_WriteData8(bin[i*2+1]);
+        LCD_WriteData8(bin[i*2]);
+    }
+    /* 解压后面的数据 每一个字节解压为8个字节 1->0xff 0->0x00 */
+    for (int i_bin = 8, i_img = 8; i_bin < size; ++i_bin)
+    {
+        for (int i = 0; i < 8; ++i, ++i_img)
+        {
+            if (GETBIT(bin[i_bin], i) == 1)
+                LCD_WriteData8(0xff);
+            else
+                LCD_WriteData8(0x00);
+        }
     }
 }

@@ -55,7 +55,9 @@ void lcd_draw_circle(uint16_t x0,uint16_t y0,uint8_t r,uint16_t color);
 
 void lcd_print_char(uint16_t x,uint16_t y,uint8_t num,uint8_t mode,uint16_t color);
 void lcd_print_string(uint16_t x,uint16_t y,const uint8_t *p,uint16_t color);
-void lcd_print_image(uint16_t x1, uint16_t y1, uint16_t len, const uint8_t* img);
+
+void lcd_print_image(uint16_t x1, uint16_t y1, uint16_t x_len, uint16_t y_len, const uint8_t* img);
+void LCD_PrintPictureBin(uint16_t x1, uint16_t y1, uint16_t len, const uint8_t* bin);
 
 /* »­±ÊÑÕÉ« */
 #define LCD_WHITE         	 0xFFFF
