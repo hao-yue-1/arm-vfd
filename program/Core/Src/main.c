@@ -29,6 +29,8 @@
 #include "lcd.h"
 #include "lcd_printf.h"
 #include "spwm.h"
+#include "lcd_font.h"
+#include "ui.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -99,7 +101,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
     RetargetInit(&huart1);
     /* 初始化LCD */
-    lcd_init(LCD_WHITE, LCD_BLACK);
+    lcd_init(LCD_BLACK, LCD_WHITE);
     /* 初始化SPWM */
     spwm_list = (uint16_t*) malloc(sizeof(uint16_t) * SPWM_LIST_MAX_SIZE);  // 动态分配内存
     spwm_set(target_spwm_freq);

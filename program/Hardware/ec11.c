@@ -8,6 +8,7 @@
 #include "debug.h"
 #include "spwm.h"
 #include "lcd_printf.h"
+#include "ui.h"
 
 /**
  * 外部中断回调函数 - EC11
@@ -52,7 +53,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
                                 target_spwm_freq += spwm_freq_step;
                                 spwm_set(target_spwm_freq);
                             }
-                            lcd_printf("target = %f | %d\r\n", (float)target_spwm_freq / 10.0f, target_spwm_freq);
+//                            lcd_printf("target = %f | %d\r\n", (float)target_spwm_freq / 10.0f, target_spwm_freq);
+                            ui_print_nums(target_spwm_freq);
                         }
                         else if (b_state_last==1 && b_state==0) // 1-0 逆时针动作
                         {
@@ -63,7 +65,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
                                 target_spwm_freq -= spwm_freq_step;
                                 spwm_set(target_spwm_freq);
                             }
-                            lcd_printf("target = %f | %d\r\n", (float)target_spwm_freq / 10.0f, target_spwm_freq);
+//                            lcd_printf("target = %f | %d\r\n", (float)target_spwm_freq / 10.0f, target_spwm_freq);
+                            ui_print_nums(target_spwm_freq);
                         }
                         else
                         {
@@ -112,7 +115,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
                     case 100: spwm_freq_step = 1;   break;
                     default: DEBUG_ERROR();
                 }
-                lcd_printf("step = %f | %d\r\n", (float)spwm_freq_step / 10.0f, spwm_freq_step);
+//                lcd_printf("step = %f | %d\r\n", (float)spwm_freq_step / 10.0f, spwm_freq_step);
             }
             tim4_1ms = 0;
             HAL_TIM_Base_Stop(&htim4);  // 消抖完毕 关闭定时器
