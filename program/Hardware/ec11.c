@@ -11,7 +11,7 @@
 #include "ui.h"
 
 /**
- * 外部中断回调函数 - EC11
+ * 外部中断回调函数 - 处理EC11顺/逆时针旋转事件
  * @param GPIO_Pin
  */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
@@ -29,8 +29,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
         case EC11_A_Pin:
         {
             /* 获取 A、B 信号 */
-            GPIO_PinState a_state = HAL_GPIO_ReadPin(EC11_A_GPIO_Port, EC11_A_Pin);
-            GPIO_PinState b_state = HAL_GPIO_ReadPin(EC11_B_GPIO_Port, EC11_B_Pin);
+            GPIO_PinState a_state = HAL_GPIO_ReadPin(EC11_A_GPIO_Port,
+                                                     EC11_A_Pin);
+            GPIO_PinState b_state = HAL_GPIO_ReadPin(EC11_B_GPIO_Port,
+                                                     EC11_B_Pin);
 
             switch (a_state)
             {
@@ -46,26 +48,22 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
                     {
                         if (b_state_last==0 && b_state==1)      // 0-1 顺时针动作
                         {
-                            printf("this is +\r\n");
-                            /* 增大目标正弦波频率 */
+                            /* 增大输出正弦波频率 */
                             if ((target_spwm_freq + spwm_freq_step) <= 1000)
                             {
                                 target_spwm_freq += spwm_freq_step;
                                 spwm_set(target_spwm_freq);
                             }
-//                            lcd_printf("target = %f | %d\r\n", (float)target_spwm_freq / 10.0f, target_spwm_freq);
                             ui_print_nums(target_spwm_freq);
                         }
                         else if (b_state_last==1 && b_state==0) // 1-0 逆时针动作
                         {
-                            printf("this is -\r\n");
-                            /* 减小目标正弦波频率 */
+                            /* 减小输出正弦波频率 */
                             if ((target_spwm_freq - spwm_freq_step) >= 10)
                             {
                                 target_spwm_freq -= spwm_freq_step;
                                 spwm_set(target_spwm_freq);
                             }
-//                            lcd_printf("target = %f | %d\r\n", (float)target_spwm_freq / 10.0f, target_spwm_freq);
                             ui_print_nums(target_spwm_freq);
                         }
                         else
@@ -84,12 +82,14 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
             }
             break;
         }
-        default: DEBUG_ERROR();  // 系统错误 or 没有给对应的中断引脚写回调函数
+        default: DEBUG_ERROR();  // 系统错误 or 没有给对应的回调函数
     }
 }
 
 /**
  * 定时器中断回调函数 定时器周期: 1ms
+ * 1. 处理EC11按键事件
+ * 2. 处理PWM输出
  * @param htim
  */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
@@ -103,7 +103,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         tim4_1ms++;
         if (tim4_1ms == 10)
         {
-            GPIO_PinState key_state = HAL_GPIO_ReadPin(EC11_A_GPIO_Port, EC11_KEY_Pin);
+            GPIO_PinState key_state = HAL_GPIO_ReadPin(EC11_A_GPIO_Port,
+                                                       EC11_KEY_Pin);
             if (key_state == 0)
             {
                 printf("this is KEY\r\n");
@@ -115,7 +116,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
                     case 100: spwm_freq_step = 1;   break;
                     default: DEBUG_ERROR();
                 }
-//                lcd_printf("step = %f | %d\r\n", (float)spwm_freq_step / 10.0f, spwm_freq_step);
             }
             tim4_1ms = 0;
             HAL_TIM_Base_Stop(&htim4);  // 消抖完毕 关闭定时器
@@ -125,7 +125,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     /* SPWM */
     if (htim->Instance == TIM1)
     {
-        __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, spwm_list[spwm_cnt++]);
+        __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1,
+                             spwm_list[spwm_cnt++]);
         if(spwm_cnt >= spwm_list_size)
         {
             spwm_cnt = 0;

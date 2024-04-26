@@ -26,8 +26,10 @@ void get_spwm_list(uint32_t pwm_freq, uint16_t pwm_duty, float spwm_freq)
     float theta;
     for (int i = 0; i < spwm_list_size; ++i)
     {
-        theta = fmod(omega * i, 2.0 * M_PI); // 计算角度 使用整数表示频率的倍数
-        spwm_list[i] = (uint16_t)((0.5 * (1 + sin(theta))) * pwm_duty); // 计算占空比 sin函数返回-1到1之间的值 将其映射到0到1之间
+        // 计算角度 使用整数表示频率的倍数
+        theta = fmod(omega * i, 2.0 * M_PI);
+        // 计算占空比 sin函数返回-1到1之间的值 将其映射到0到1之间
+        spwm_list[i] = (uint16_t)((0.5 * (1 + sin(theta))) * pwm_duty);
     }
 }
 
