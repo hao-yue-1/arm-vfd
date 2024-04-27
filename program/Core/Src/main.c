@@ -102,6 +102,7 @@ int main(void)
     RetargetInit(&huart1);
     /* 初始化LCD */
     lcd_init(LCD_BLACK, LCD_WHITE);
+    ui_print_nums(target_spwm_freq);
     /* 初始化SPWM */
     spwm_list = (uint16_t*) malloc(sizeof(uint16_t) * SPWM_LIST_MAX_SIZE);  // 动态分配内存
     spwm_set(target_spwm_freq);
