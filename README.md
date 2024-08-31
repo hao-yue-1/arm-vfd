@@ -9,3 +9,7 @@
 - 硬件：嘉立创EDA专业版
 - 软件：CLion + STM32CubeMX + OpenOCD + MinGW + arm-none-eabi-gcc
 - 调试工具：DAPlink
+
+# 注意
+
+- 该项目只是一个简单的输出可调频率正弦波的工具，并未做过任何驱动电机的测试，只是一个玩具，切勿做任何危险的操作！！！
